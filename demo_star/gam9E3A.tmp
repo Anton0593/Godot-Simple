@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://d3d1kwnbjdhwf"]
+
+[ext_resource type="Script" path="res://game.gd" id="1_7bi8e"]
+[ext_resource type="Texture2D" uid="uid://baj4xukvf568b" path="res://sprites/space.png" id="1_035gs"]
+[ext_resource type="Texture2D" uid="uid://vsempfpeu7wr" path="res://sprites/character.png" id="1_mkera"]
+[ext_resource type="PackedScene" uid="uid://37twyys0u1tm" path="res://asteroid.tscn" id="2_xwjhm"]
+[ext_resource type="Script" path="res://player.gd" id="4_sc6qs"]
+[ext_resource type="PackedScene" uid="uid://lbxrdic7vlym" path="res://hud.tscn" id="6_yymec"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ei1w4"]
+radius = 35.3553
+
+[node name="Game" type="Node2D" groups=["Enemy"]]
+script = ExtResource("1_7bi8e")
+asteroid_scene = ExtResource("2_xwjhm")
+
+[node name="BackGround" type="TextureRect" parent="."]
+offset_right = 1153.0
+offset_bottom = 654.0
+texture = ExtResource("1_035gs")
+
+[node name="Player" type="CharacterBody2D" parent="." groups=["Enemy"]]
+position = Vector2(544, 548)
+rotation = -1.54201
+script = ExtResource("4_sc6qs")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player" groups=["Enemy"]]
+texture = ExtResource("1_mkera")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CircleShape2D_ei1w4")
+
+[node name="RayCast2D" type="RayCast2D" parent="Player" groups=["Enemy"]]
+target_position = Vector2(250, 0)
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(564, 1)
+
+[node name="MessageTimer" type="Timer" parent="."]
+
+[node name="HUD" parent="." instance=ExtResource("6_yymec")]
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[connection signal="draw" from="." to="." method="start_game"]
+[connection signal="draw" from="." to="." method="new_game"]
+[connection signal="ready" from="Player/Sprite2D" to="Player/Sprite2D" method="_on_ready"]
+[connection signal="timeout" from="MessageTimer" to="." method="_on_message_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
